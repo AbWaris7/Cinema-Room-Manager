@@ -33,6 +33,8 @@ public class Cinema {
                 case 2:
                     buyTicket(tickets);
                     break;
+                case 3:
+                    System.out.println("Statistics");
                 case 0:
                     System.out.println("Exiting...");
                     input.close();
