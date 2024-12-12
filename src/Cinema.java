@@ -19,10 +19,16 @@ public class Cinema {
             }
         }
 
+        // Initialize statistics
+        int purchasedTickets = 0;
+        int currentIncome = 0;
+        int totalIncome = calculateTotalIncome(rows, columns);
+
         while (true) {
             // Display menu options
             System.out.println("\n1. Show the seats");
             System.out.println("2. Buy a ticket");
+            System.out.println("3. Statistics");
             System.out.println("0. Exit");
             int choice = input.nextInt();
 
@@ -31,10 +37,13 @@ public class Cinema {
                     showSeats(tickets);
                     break;
                 case 2:
-                    buyTicket(tickets);
+                    int[] result = buyTicket(tickets);
+                    purchasedTickets += result[0];
+                    currentIncome += result[1];
                     break;
                 case 3:
-                    System.out.println("Statistics");
+                    showStatistics(purchasedTickets, rows * columns, currentIncome, totalIncome);
+                    break;
                 case 0:
                     System.out.println("Exiting...");
                     input.close();
@@ -65,7 +74,7 @@ public class Cinema {
         }
     }
 
-    private static void buyTicket(String[][] tickets) {
+    private static int[] buyTicket(String[][] tickets) {
         Scanner input = new Scanner(System.in);
 
         final int PREMIUM_TICKET_PRICE = 10;
@@ -106,7 +115,29 @@ public class Cinema {
 
             // Mark the seat as booked
             tickets[buyRow - 1][buyColumn - 1] = "B";
-            break;
+            return new int[]{1, singleTicketPrice};
+        }
+    }
+
+    private static void showStatistics(int purchasedTickets, int totalSeats, int currentIncome, int totalIncome) {
+        double percentage = (double) purchasedTickets / totalSeats * 100;
+        System.out.printf("\nNumber of purchased tickets: %d\n", purchasedTickets);
+        System.out.printf("Percentage: %.2f%%%n", percentage);
+        System.out.printf("Current income: $%d\n", currentIncome);
+        System.out.printf("Total income: $%d\n", totalIncome);
+    }
+
+    private static int calculateTotalIncome(int rows, int columns) {
+        final int PREMIUM_TICKET_PRICE = 10;
+        final int DISCOUNT_TICKET_PRICE = 8;
+        int totalSeats = rows * columns;
+
+        if (totalSeats <= 60) {
+            return totalSeats * PREMIUM_TICKET_PRICE;
+        } else {
+            int frontHalfRows = rows / 2;
+            int backHalfRows = rows - frontHalfRows;
+            return (frontHalfRows * columns * PREMIUM_TICKET_PRICE) + (backHalfRows * columns * DISCOUNT_TICKET_PRICE);
         }
     }
 }
